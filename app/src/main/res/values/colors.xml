@@ -54,4 +54,5 @@
     <color name="buttonText">#ffffff</color>
     <color name="greenOEE">#388E3C</color>
     <color name="redOEE">#D32F2F</color>
+    <color name="Transparent">#00000000</color>
 </resources>

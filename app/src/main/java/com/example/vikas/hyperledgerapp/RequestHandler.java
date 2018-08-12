@@ -30,6 +30,8 @@ import java.util.Map;
 
 import javax.net.ssl.HttpsURLConnection;
 
+import okhttp3.OkHttpClient;
+
 /**
  * Created by dvg-vk on 03.11.2016.
  */
@@ -113,7 +115,7 @@ public class RequestHandler {
         try {
             URL url = new URL(requestURL);
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
-            con.setConnectTimeout(15000);
+            con.setConnectTimeout(100000);
             //con.setRequestProperty("token", Config.token);
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(con.getInputStream()));
 

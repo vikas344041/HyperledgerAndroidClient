@@ -61,11 +61,16 @@ public class GetAllProductsActivity extends AppCompatActivity {
                 logout();
             }
         });
-        getAllProducts();
+        if(Config.IfGetAllProducts){
+            getAllProducts();
+        }else{
+            getSingleProduct();
+        }
+
     }
 
     public void getAllProducts(){
-        final String URL_GET_ALL_PRODUCTS="http://"+Config.ServerIP+":8000/get_all_tuna";
+        final String URL_GET_ALL_PRODUCTS="http://"+Config.ServerIP+":"+Config.Port+"/get_all_tuna";
         class GetJSON extends AsyncTask<Void,Void,String> {
             ProgressDialog loading;
             @Override
@@ -182,5 +187,67 @@ public class GetAllProductsActivity extends AppCompatActivity {
         LogoutAsync loa = new LogoutAsync();
         loa.execute();
 
+    }
+
+    public void getSingleProduct(){
+        final String URL_GET_PRODUCT="http://"+Config.ServerIP+":"+Config.Port+"/get_tuna/"+Config.ProductID;
+        class GetJSONProduct extends AsyncTask<Void,Void,String> {
+            ProgressDialog loading;
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+            }
+
+            @Override
+            protected String doInBackground(Void... params) {
+                RequestHandler rh = new RequestHandler();
+                String s = rh.sendGetRequest(URL_GET_PRODUCT);
+                return s;
+            }
+
+            @Override
+            protected void onPostExecute(String s) {
+                super.onPostExecute(s);
+                JSON_STRING = s;
+                getProductResult();
+                setAllProducts();
+            }
+        }
+        GetJSONProduct gjp = new GetJSONProduct();
+        gjp.execute();
+    }
+
+    private void getProductResult(){
+        JSONObject jsonObject = null;
+        try {
+            jsonObject = new JSONObject(JSON_STRING);
+            productID=new String[1];
+            uniqueID=new String[1];
+            owner=new String[1];
+            timestamp=new String[1];
+            location=new String[1];
+
+            productID[0]=Config.ProductID;
+            owner[0]=jsonObject.getString("holder");
+            location[0]=jsonObject.getString("location");
+            timestamp[0]=jsonObject.getString("timestamp");
+            uniqueID[0]=jsonObject.getString("vessel");
+
+
+        } catch (JSONException e) {
+            owner[0]="-";
+            location[0]="-";
+            timestamp[0]="-";
+            uniqueID[0]="-";
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent(GetAllProductsActivity.this, OptionsActivity.class);
+        finish();
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        overridePendingTransition(R.anim.back_slide_out, R.anim.back_slide_in);
     }
 }
